@@ -1,67 +1,39 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://dt26k2526gyxn"]
 
-[ext_resource path="res://scenes/Cell.gd" type="Script" id=1]
-[ext_resource path="res://images/hex_frame.png" type="Texture" id=2]
-[ext_resource path="res://scenes/HexArea.tscn" type="PackedScene" id=3]
-[ext_resource path="res://fonts/cell_font.tres" type="DynamicFont" id=4]
+[ext_resource type="Script" path="res://scenes/Cell.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://c5qg8hhe6ea00" path="res://images/hex_frame.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://co7c0y0bbbsgn" path="res://scenes/HexArea.tscn" id="3"]
 
-[node name="Cell" type="Node2D" groups=[
-"cells",
-]]
-script = ExtResource( 1 )
+[node name="Cell" type="Node2D" groups=["cells"]]
+script = ExtResource("1")
 
-[node name="HexArea" parent="." instance=ExtResource( 3 )]
+[node name="HexArea" parent="." instance=ExtResource("3")]
 
-[node name="Sprite" type="Sprite" parent="."]
-scale = Vector2( 0.47, 0.47 )
+[node name="Sprite" type="Sprite2D" parent="."]
 z_index = -2
-texture = ExtResource( 2 )
+scale = Vector2(0.47, 0.47)
+texture = ExtResource("2")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_top = -50.0
+offset_bottom = -50.0
 mouse_filter = 2
 use_top_left = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Deck" type="VBoxContainer" parent="CenterContainer"]
-visible = false
-margin_left = -60.0
-margin_top = -67.0
-margin_right = 60.0
-margin_bottom = 67.0
+layout_mode = 2
 mouse_filter = 2
-custom_constants/separation = 20
 
 [node name="Label" type="Label" parent="CenterContainer/Deck"]
-margin_right = 120.0
-margin_bottom = 57.0
-custom_fonts/font = ExtResource( 4 )
+layout_mode = 2
 text = "Deck"
-align = 1
-valign = 1
 
 [node name="TokensLeft" type="Label" parent="CenterContainer/Deck"]
-margin_top = 77.0
-margin_right = 120.0
-margin_bottom = 134.0
-custom_fonts/font = ExtResource( 4 )
+layout_mode = 2
 text = "35"
-align = 1
-valign = 2
 
 [node name="Discard" type="Label" parent="CenterContainer"]
-visible = false
-margin_left = -94.0
-margin_top = -29.0
-margin_right = 93.0
-margin_bottom = 28.0
-custom_fonts/font = ExtResource( 4 )
+layout_mode = 2
 text = "Discard"
-align = 1
-valign = 3
+
 [connection signal="clicked" from="HexArea" to="." method="_on_HexArea_clicked"]

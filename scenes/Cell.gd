@@ -1,23 +1,24 @@
 extends Node2D
 class_name Cell
 
-const COLOR_ACTIVATED = Color.blue
-const COLOR_HIGHLIGHTED = Color.yellow
-const COLOR_NORMAL = Color.white
+const COLOR_ACTIVATED = Color.BLUE
+const COLOR_HIGHLIGHTED = Color.YELLOW
+const COLOR_NORMAL = Color.WHITE
 
-export (int, "None", "A", "B") var belongs_to = 0
-export (int, "Board", "Stack", "Discard", "Hand") var type = 0
+@export_enum ("None", "A", "B") var belongs_to: int = 0
+@export_enum ("Board", "Stack", "Discard", "Hand") var type: int = 0
 
 const TYPE_BOARD = 0
 const TYPE_STACK = 1
 const TYPE_DISCARD = 2
 const TYPE_HAND = 3
 
-onready var sprite = $Sprite
-onready var area = $HexArea
-onready var deck_ui = $CenterContainer/Deck
-onready var tokens_left = $CenterContainer/Deck/TokensLeft
-onready var discard_ui = $CenterContainer/Discard
+@onready var sprite = $Sprite
+@onready var area = $HexArea
+@onready var deck_ui = $CenterContainer/Deck
+@onready var tokens_left = $CenterContainer/Deck/TokensLeft
+@onready var discard_ui = $CenterContainer/Discard
+
 
 var blocked = false
 
@@ -28,9 +29,9 @@ func _enter_tree():
 
 
 func _ready():
-	global.connect("cell_selected", self, "_on_cell_selected")
-	global.connect("lock", self, "_on_lock")
-	global.connect("unlock", self, "_on_unlock")
+	global.connect("cell_selected", Callable(self, "_on_cell_selected"))
+	global.connect("lock", Callable(self, "_on_lock"))
+	global.connect("unlock", Callable(self, "_on_unlock"))
 	if type == TYPE_STACK:
 		deck_ui.show()
 	elif type == TYPE_DISCARD:
@@ -52,10 +53,11 @@ func _on_HexArea_clicked():
 					# TODO: probably send a signal: no tokens available
 					break
 				tokens_left.text = str(len(global.TOKENS[belongs_to]))
-				var new_token = load("res://scenes/Token.tscn").instance()
+				var new_token = load("res://scenes/Token.tscn").instantiate()
+				
 				new_token.initialize(belongs_to, token_number)
 				add_child(new_token)
-				new_token.reparent(self, cell)
+				new_token.reparent_custom(self, cell)
 				new_token.deactivate()
 				break
 		return
@@ -88,13 +90,13 @@ func is_activated():
 
 func activate():
 	area.input_pickable = true
-	modulate = Color.white
+	modulate = Color.WHITE
 
 
 func deactivate(update_color=true):
 	area.input_pickable = false
 	if update_color:
-		modulate = Color.darkgray
+		modulate = Color.DARK_GRAY
 
 
 func _on_lock():
@@ -122,14 +124,14 @@ func _on_cell_selected(cell):
 	if cell.type == TYPE_DISCARD:
 		if type == TYPE_HAND and token and is_activated():
 			# TODO: send signal and add discarded token to the list
-			token.reparent(self, cell)
+			token.reparent_custom(self, cell)
 		if type == TYPE_BOARD and token and token.is_activated():
-			token.reparent(self, cell)
+			token.reparent_custom(self, cell)
 		activate()
 	if cell.type == TYPE_BOARD:
 		if type == TYPE_HAND and is_activated():
 			if token and not cell.get_token():
-				token.reparent(self, cell)
+				token.reparent_custom(self, cell)
 				token.activate()
 				cell.deactivate(false)
 				deactivate()
@@ -137,7 +139,7 @@ func _on_cell_selected(cell):
 				deactivate()
 		elif type == TYPE_BOARD and token and token.is_activated():
 			if cell.is_activated():
-				token.reparent(self, cell)
+				token.reparent_custom(self, cell)
 			cell.deactivate(false)
 			activate()
 		if type == TYPE_STACK:

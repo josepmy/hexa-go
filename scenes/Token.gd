@@ -2,27 +2,27 @@ extends Node2D
 class_name Token
 
 
-export (int) var belongs_to = 0
-export var token_number = 0
+@export var belongs_to: int = 0
+@export var token_number = 0
 
-onready var center_label = $CenterContainer
-onready var wound_count_label = $CenterContainer/WoundCount
-onready var rotation_indicator = $RotationIndicator
-onready var area = $HexArea
-onready var timer = $Timer
-onready var tween = $Tween
+@onready var center_label = $CenterContainer
+@onready var wound_count_label = $CenterContainer/WoundCount
+@onready var rotation_indicator = $RotationIndicator
+@onready var area = $HexArea
+@onready var timer = $Timer
+#@onready var tween = $Tween
+#@onready var tween : Tween = Tween.new()
 
-onready var wound_add = $HexAreaWoundAdd
-onready var wound_remove = $HexAreaWoundRemove
-onready var long_timer = $LongTimer
+@onready var wound_add = $HexAreaWoundAdd
+@onready var wound_remove = $HexAreaWoundRemove
+@onready var long_timer = $LongTimer
 var sprite = null
 
 var rotation_in_progress = false
 var original_rotation_point = null
 var original_token_rotation = null
 
-var wound_count = 0 setget set_wound_count
-
+var wound_count = 0 : set = set_wound_count
 
 func initialize(belongs_to, token_number):
 	# TODO: refactor this logic and `_ready` method
@@ -49,8 +49,8 @@ func set_wound_count(value):
 
 
 func _input(event):
-	if tween.is_processing():
-		return
+	#if tween.is_processing():
+	#	return
 	if Input.is_action_just_released("click"):
 		long_timer.stop()
 		rotation_in_progress = false
@@ -60,7 +60,7 @@ func _input(event):
 		long_timer.stop()
 		var new_rotation_position = center_label.get_local_mouse_position()
 		var angle = original_rotation_point.angle_to(new_rotation_position)
-		angle = rad2deg(angle)
+		angle = rad_to_deg(angle)
 		sprite.rotation_degrees = original_token_rotation + angle
 
 
@@ -134,16 +134,21 @@ func set_wound_ui(visible):
 		rotation_indicator.hide()
 
 
-func reparent(from_node, to_node):
+func reparent_custom(from_node, to_node):
 	if self in from_node.get_children():
 		from_node.remove_child(self)
 	to_node.add_child(self)
 	self.position = to_node.to_local(from_node.global_position)
-	tween.interpolate_property(
-		self, "position", null, Vector2(0, 0), 0.5,
-		Tween.TRANS_SINE, Tween.EASE_IN_OUT
-	)
-	tween.start()
+	#tween.interpolate_property(
+		#self, "position", null, Vector2(0, 0), 0.5,
+		#Tween.TRANS_SINE, Tween.EASE_IN_OUT
+	#)
+	#tween.start()
+	#var tween = create_tween()
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position", Vector2(0, 0), 0.5)
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
 
 
 func _on_Tween_tween_all_completed():

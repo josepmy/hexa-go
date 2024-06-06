@@ -21,7 +21,7 @@ func _ready():
 
 
 func _enter_tree():
-	get_tree().connect("node_added", self, "apply_player_color")
+	get_tree().connect("node_added", Callable(self, "apply_player_color"))
 
 
 func get_token(player):
@@ -34,6 +34,6 @@ func _on_node_added(node):
 
 func apply_player_color(node):
 	if "belongs_to:1" in node.get_groups():
-		node.self_modulate = Color.deepskyblue
+		node.self_modulate = Color.DEEP_SKY_BLUE #deepskyblue
 	if "belongs_to:2" in node.get_groups():
-		node.self_modulate = Color.tomato
+		node.self_modulate = Color.TOMATO  # tomato
